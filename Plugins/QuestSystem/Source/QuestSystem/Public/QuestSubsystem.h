@@ -35,7 +35,7 @@ struct FQuestComparator
 };
 
 USTRUCT()
-struct FTArrayQuestObject
+struct FTArrayQuestComparator
 {
 	GENERATED_BODY()
 
@@ -67,25 +67,6 @@ struct FTArrayQuestObject
 		return QuestObjects[Index];
 	}
 };
-
-USTRUCT()
-struct FQuestContainer
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	TArray<AController*> Controllers = TArray<AController*>();
-
-	UPROPERTY()
-	TArray<FTArrayQuestObject> QuestObjects = TArray<FTArrayQuestObject>();
-
-	void Add(FQuestComparator Comparator, AController* Owner)
-	{
-		if (!Owner) return;
-	}
-	
-	void Clear();
-};
 #pragma endregion QuestContainer
 
 /**
@@ -103,7 +84,7 @@ public:
 	virtual void Deinitialize() override;
 	
 	UPROPERTY()
-	FQuestContainer Quests = FQuestContainer();
+	TMap<AController*, FTArrayQuestComparator> Quests = TMap<AController*, FTArrayQuestComparator>();
 
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
 	UQuestObject* GetQuestObject(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner) const;
@@ -172,14 +153,14 @@ public:
 	UQuestObject* ApplyCommandToQuest(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner, EQuestEnterCommand QuestCommand);
 	
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	bool EnsureControllerEntryExists(AController* Owner, int32& OwnerIndex);
+	bool EnsureControllerEntryExists(AController* Owner);
 	
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
 	void ClearQuests();
 
 private:
 	UFUNCTION()
-	FQuestComparator& GetQuestComparatorForController(TSubclassOf<UQuestObject> QuestClass, int32 ControllerIndex);
+	FQuestComparator& GetQuestComparatorForController(TSubclassOf<UQuestObject> QuestClass, const AController* Controller);
 
 	UFUNCTION()
 	FQuestComparator CreateNewComparator(TSubclassOf<UQuestObject> QuestClass, AController* Owner, bool AutoUnlocked = false);

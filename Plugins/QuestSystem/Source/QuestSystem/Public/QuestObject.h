@@ -138,7 +138,7 @@ protected:
 	UPROPERTY(Category="Quest", BlueprintReadWrite)
 	bool ShouldTick = false;
 
-	UPROPERTY(Category="Quest", BlueprintReadOnly, VisibleInstanceOnly)
+	UPROPERTY(Category="Quest", BlueprintReadWrite, VisibleInstanceOnly)
 	EQuestStatus QuestStatus = EQuestStatus::LOCKED;
 
 	friend class UQuestSubsystem;
