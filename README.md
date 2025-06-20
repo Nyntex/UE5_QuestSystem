@@ -50,4 +50,6 @@ The file should look at least like this when you install this plugin:
   ]
 }
 ```
-  
+
+## Why are there basically no feature commits?
+I made this plugin during another project in a private repository and ripped it out of their to have a standalone verion.
