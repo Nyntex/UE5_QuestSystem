@@ -6,9 +6,12 @@ The reason is simple, the project I made this plugin for is a singleplayer only 
 # What can it do?
 - Creation of Quests with Objectives and Rewards
 - Unlocking, Accepting, Starting and Finishing Quests
+- Receiving rewards for finishing quests (or parts)
 - Quest Progression with generic progression objects
+- Multiple objectives per quest
 
 It is written in a way that it can be used for both, story games where you have a quest that you receive when talking to an NPC and finish once as well as for example "Monster Hunter"-like quests that need to be unlocked once and then can be repeated indefinitely.
+Therefore you can see this project as a base building block for a quest system you want to make
 
 # Installation
 This plugin is made for Unreal Engine 5.2 and uses Unreals Subsystems to create a Quest Game Instance Subsystem.
@@ -52,4 +55,4 @@ The file should look at least like this when you install this plugin:
 ```
 
 ## Why are there basically no feature commits?
-I made this plugin during another project in a private repository and ripped it out of their to have a standalone verion.
+I made this plugin during another project in a private repository and ripped it out of there to have a standalone version.
