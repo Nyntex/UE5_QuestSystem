@@ -1,7 +1,7 @@
 # Quest System
 This is a very generic quest system written with Unreal Engine classes in C++. I wanted to create a system that is similarly user friendly as the Gameplay Ability System and I wanted to mimic the way
 they handle abilities by having an ability that needs to be unlocked first and stands fully for itself. One major drawback of my system, compared to GAS, it's not replicated, meaning you must do the replication part yourself.
-The reason is simple, the project I made this plugin for is a singleplayer only project and ensuring that this plugin would work in multiplayer was not suitable.
+The reason is simple, the project I made this plugin for is a singleplayer only project and ensuring that this plugin would work in multiplayer was too time consuming.
 
 # What can it do?
 - Creation of Quests with Objectives and Rewards
