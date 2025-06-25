@@ -5,5 +5,5 @@
 
 UQuestProgressionObject::UQuestProgressionObject()
 {
-	ModifierToProgress = nullptr;
+	ObjectiveToProgress = nullptr;
 }

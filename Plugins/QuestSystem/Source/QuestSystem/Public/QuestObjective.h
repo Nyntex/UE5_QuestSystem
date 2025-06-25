@@ -13,7 +13,7 @@ class UQuestObject;
 struct FQuestProgressor;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnObjectiveStatusUpdated, UQuestObjective*, Modifier, EQuestStatus, UpdatedStatus, EQuestStatus, OldStatus);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProgressUpdated, UObject*, ProgressAdded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProgressUpdated, UQuestProgressionObject*, ProgressAdded);
 
 /**
  * The Quest Objective tells a quest object when it's done. A Quest Object can have multiple
@@ -54,10 +54,10 @@ public:
 
 //methods
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="QuestObjective", meta=(ForceAsFunction=true))
-	void AddProgress(UQuestProgressionObject* Progress);
+	void AddProgress(UQuestProgressionObject* Progress, UPARAM(ref) bool& Consume);
 
 	UFUNCTION(BlueprintCallable, Category="QuestObjective")
-	void BroadcastProgress(UObject* AddedProgress);
+	void BroadcastProgress(UQuestProgressionObject* AddedProgress);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="QuestObjective")
 	FString GetObjectiveDescription() const;

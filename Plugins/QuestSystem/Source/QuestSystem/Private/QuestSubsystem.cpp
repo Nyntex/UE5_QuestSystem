@@ -3,6 +3,7 @@
 
 #include "QuestSubsystem.h"
 #include "QuestObject.h"
+#include "QuestProgressionObject.h"
 
 UQuestSubsystem::UQuestSubsystem()
 	: Super()
@@ -134,6 +135,7 @@ UQuestObject* UQuestSubsystem::ApplyCommandToQuest(TSubclassOf<UQuestObject> Que
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::TryEnterQuestState)
 	
 	if (!EnsureControllerEntryExists(QuestOwner)) return nullptr;
+	if (!IsValid(QuestClass)) return nullptr;
 	
 	FQuestComparator QuestComparator = GetQuestComparatorForController(QuestClass, QuestOwner);
 	//FQuestComparator NewComparator = FQuestComparator();
@@ -191,6 +193,22 @@ AController* UQuestSubsystem::GetQuestOwner(TSubclassOf<UQuestObject> QuestClass
 void UQuestSubsystem::AddProgress(AController* QuestOwner, UQuestProgressionObject* Progressor, TSubclassOf<UQuestObject> QuestClass)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::AddProgress)
+	if (!EnsureControllerEntryExists(QuestOwner) || !Progressor) return;
+	if (!IsValid(GetQuestObject(QuestClass, QuestOwner))) return;
+
+	if (!QuestClass)
+	{
+		auto QuestObjects = GetQuestObjects(QuestOwner);
+		for (auto QuestObject : QuestObjects)
+		{
+			if (!IsValid(QuestObject)) continue;
+			QuestObject->ProgressQuest(Progressor);
+			//a quest might consume the progressor and we don't want to add more progress when it gets destroyed
+			if (!IsValid(Progressor)) break;
+		}
+		return;
+	}
+	
 	GetQuestObject(QuestClass, QuestOwner)->ProgressQuest(Progressor);
 }
 

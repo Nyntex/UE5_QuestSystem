@@ -99,7 +99,7 @@ public:
 	UFUNCTION(Category="Quest", BlueprintCallable)
 	EQuestStatus GetStatus() const { return QuestStatus; }
 	
-	UFUNCTION(Category="Quest", BlueprintCallable)
+	UFUNCTION(Category="Quest", BlueprintCallable, BlueprintNativeEvent)
 	void ProgressQuest(UQuestProgressionObject* Progress);
 	
 	UFUNCTION(Category="Quest", BlueprintCallable, BlueprintNativeEvent)

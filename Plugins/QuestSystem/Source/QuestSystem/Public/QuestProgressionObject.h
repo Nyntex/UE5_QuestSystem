@@ -19,6 +19,6 @@ public:
 	UQuestProgressionObject();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "QuestObjective", meta=(ExposeOnSpawn=true))
-	TSubclassOf<UQuestObjective> ModifierToProgress;
+	TSubclassOf<UQuestObjective> ObjectiveToProgress;
 	
 };

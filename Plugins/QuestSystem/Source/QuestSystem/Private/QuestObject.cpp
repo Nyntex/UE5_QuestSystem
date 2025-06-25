@@ -31,20 +31,23 @@ bool UQuestObject::Initialize_Implementation()
 	return true;
 }
 
-void UQuestObject::ProgressQuest(UQuestProgressionObject* Progress)
+void UQuestObject::ProgressQuest_Implementation(UQuestProgressionObject* Progress)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestObject::ProgressQuest);
-
+	if (QuestStatus != EQuestStatus::IN_PROGRESS) return;
+	if (!Progress) return;
+	
+	bool Consumed = false;
 	for (UQuestObjective* Objective : QuestObjectives)
 	{
-		if (Objective->GetClass() == Progress->ModifierToProgress)
+		if (Objective->GetClass() == Progress->ObjectiveToProgress)
 		{
-			Objective->AddProgress(Progress);
+			Objective->AddProgress(Progress, Consumed);
 			OnQuestProgressUpdatedDelegate.Broadcast(this, QuestObjectives, Progress);
-			break;
+			if (Consumed) break;
 		}
 	}
-	
+
 	Progress->ConditionalBeginDestroy(); //now we don't need it anymore
 	
 	TryFinishQuest();

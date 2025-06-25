@@ -10,7 +10,7 @@ UQuestObjective::UQuestObjective()
 {
 }
 
-void UQuestObjective::BroadcastProgress(UObject* AddedProgress)
+void UQuestObjective::BroadcastProgress(UQuestProgressionObject* AddedProgress)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestObjective::BroadcastProgress)
 	OnProgressUpdatedDelegate.Broadcast(AddedProgress);
@@ -84,7 +84,7 @@ void UQuestObjective::Initialize_Implementation(UQuestObject* OwningQuest)
 	}
 }
 
-void UQuestObjective::AddProgress_Implementation(UQuestProgressionObject* Progress)
+void UQuestObjective::AddProgress_Implementation(UQuestProgressionObject* Progress, bool& Consume)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestObjective::AddProgress_Implementation)
 }
