@@ -16,7 +16,6 @@ Therefore you can see this project as a base building block for a quest system y
 # Installation
 This plugin is made for Unreal Engine 5.2 and uses Unreals Subsystems to create a Quest Game Instance Subsystem.
 
-## 
 1. Put the QuestSystem folder into your projects "Plugin"-folder
 2. (optional) If you need to use it in c++ you will need to add the QuestSystem to the (YourModule).Build.cs in the PublicDependencyModules section, so that it may look like this:
 
