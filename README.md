@@ -16,11 +16,27 @@ Therefore you can see this project as a base building block for a quest system y
 # Installation
 This plugin is made for Unreal Engine 5.2 and uses Unreals Subsystems to create a Quest Game Instance Subsystem.
 
+## 
 1. Put the QuestSystem folder into your projects "Plugin"-folder
-2. Start Unreal
-3. Ensure it is enabled in the plugin tab
+2. (optional) If you need to use it in c++ you will need to add the QuestSystem to the (YourModule).Build.cs in the PublicDependencyModules section, so that it may look like this:
 
-If it does not show up in the plugin tab you may add 
+``` c#
+PublicDependencyModuleNames.AddRange(new string[]
+  {
+    "Core",
+    "CoreUObject",
+    "Engine", 
+    "InputCore", 
+    "EnhancedInput",
+    "UMG",
+    "SlateCore",
+    "Slate",
+    "AIModule",
+    "QuestSystem"
+});
+```
+
+3. If it does not show up in the plugin tab you may add 
 ``` json
 {
   "Name": "QuestSystem",
@@ -54,5 +70,8 @@ The file should look at least like this when you install this plugin:
 }
 ```
 
+3. Start Unreal
+4. Ensure it is enabled in the plugin tab
+
 ## Why are there basically no feature commits?
-I made this plugin during another project in a private repository and ripped it out of there to have a standalone version.
+I made this plugin during another project in a private repository and ripped it out of there to have a standalone version. The few feature commits you will find here will have happened in the private repository and be placed here.
