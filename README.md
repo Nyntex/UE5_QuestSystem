@@ -32,7 +32,7 @@ PublicDependencyModuleNames.AddRange(new string[]
     "SlateCore",
     "Slate",
     "AIModule",
-    "QuestSystem"
+    "QuestSystem" // <- This is the important part
 });
 ```
 
