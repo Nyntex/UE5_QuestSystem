@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Protected under GPL-3.0 License
 
 
 #include "QuestObjective.h"
