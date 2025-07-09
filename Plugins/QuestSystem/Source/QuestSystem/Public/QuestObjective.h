@@ -12,7 +12,7 @@ class UQuestProgressionObject;
 class UQuestObject;
 struct FQuestProgressor;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnObjectiveStatusUpdated, UQuestObjective*, Modifier, EQuestStatus, UpdatedStatus, EQuestStatus, OldStatus);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnObjectiveStatusUpdated, UQuestObjective*, Objective, EQuestStatus, UpdatedStatus, EQuestStatus, OldStatus);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProgressUpdated, UQuestProgressionObject*, ProgressAdded);
 
 /**

@@ -120,7 +120,7 @@ AController* UQuestObject::GetOwningController_Implementation()
 	return UGameplayStatics::GetPlayerController(this, 0);
 }
 
-TArray<FString> UQuestObject::GetQuestModifierDescriptions() const
+TArray<FString> UQuestObject::GetQuestObjectiveDescriptions() const
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestObject::GetQuestObjectiveDescriptions);
 	TArray<FString> QuestDescriptions;
@@ -141,7 +141,7 @@ bool UQuestObject::Unlock_Implementation()
 	return true;
 }
 
-void UQuestObject::OnModifierStatusUpdated_Implementation(UQuestObjective* UpdatedModifier, EQuestStatus NewStatus,
+void UQuestObject::OnObjectiveStatusUpdated_Implementation(UQuestObjective* UpdatedModifier, EQuestStatus NewStatus,
                                                           EQuestStatus OldStatus)
 {
 }

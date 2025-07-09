@@ -84,7 +84,7 @@ public:
 	TArray<UQuestReward*> QuestRewards;
 	
 	UFUNCTION(Category="Quest", BlueprintCallable)
-	TArray<FString> GetQuestModifierDescriptions() const;
+	TArray<FString> GetQuestObjectiveDescriptions() const;
 
 	UFUNCTION(Category="Quest", BlueprintCallable, BlueprintNativeEvent, meta=(ForceAsFunction))
 	bool Unlock();
@@ -94,7 +94,7 @@ public:
 	bool Initialize();
 
 	UFUNCTION(Category="Quest", BlueprintCallable, BlueprintNativeEvent)
-	void OnModifierStatusUpdated(UQuestObjective* UpdatedModifier, EQuestStatus NewStatus, EQuestStatus OldStatus);
+	void OnObjectiveStatusUpdated(UQuestObjective* UpdatedModifier, EQuestStatus NewStatus, EQuestStatus OldStatus);
 
 	UFUNCTION(Category="Quest", BlueprintCallable)
 	EQuestStatus GetStatus() const { return QuestStatus; }
