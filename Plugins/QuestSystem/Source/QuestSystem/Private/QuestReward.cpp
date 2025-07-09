@@ -14,6 +14,6 @@ void UQuestReward::ClaimReward_Implementation()
 UQuestSubsystem* UQuestReward::GetQuestSubsystem() const
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestReward::GetQuestSubsystem)
-	UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(OwningQuest->QuestOwningController);
+	UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(GetOuter());
 	return Cast<UQuestSubsystem>(GameInstance->GetSubsystem<UQuestSubsystem>());
 }

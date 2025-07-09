@@ -40,10 +40,10 @@ void UQuestObjective::ClaimRewards()
 	}
 }
 
-AController* UQuestObjective::GetController() const
+FString UQuestObjective::GetQuestOwner() const
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestObjective::GetController)
-	return GetOwningQuestObject()->QuestOwningController;
+	return GetOwningQuestObject()->QuestOwner;
 }
 
 void UQuestObjective::TickObjective_Implementation(UQuestObject* Quest, float DeltaTime)

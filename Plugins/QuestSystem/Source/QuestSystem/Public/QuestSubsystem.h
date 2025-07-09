@@ -84,20 +84,20 @@ public:
 	virtual void Deinitialize() override;
 	
 	UPROPERTY()
-	TMap<AController*, FTArrayQuestComparator> Quests = TMap<AController*, FTArrayQuestComparator>();
+	TMap<FString, FTArrayQuestComparator> Quests = TMap<FString, FTArrayQuestComparator>();
 
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	UQuestObject* GetQuestObject(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner) const;
+	UQuestObject* GetQuestObject(TSubclassOf<UQuestObject> QuestClass, FString QuestOwner) const;
 
 	/**
 	 * @param QuestClass 
 	 * @return The first controller that has the specified quest class as an existing quest. Existing means it has been created through any means
 	 */
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	AController* GetQuestOwner(TSubclassOf<UQuestObject> QuestClass) const;
+	FString GetQuestOwner(TSubclassOf<UQuestObject> QuestClass) const;
 
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	TArray<UQuestObject*> GetQuestObjects(AController* QuestsOwner) const;
+	TArray<UQuestObject*> GetQuestObjects(FString QuestsOwner) const;
 
 	/**
 	 *	Unlocks the given quest. If the quest does not exist it gets created for the
@@ -108,13 +108,13 @@ public:
 	 * @return The quest object that has been unlocked to do further things like starting.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	UQuestObject* UnlockQuest(TSubclassOf<UQuestObject> QuestToUnlock, AController* QuestOwner);
+	UQuestObject* UnlockQuest(TSubclassOf<UQuestObject> QuestToUnlock, FString QuestOwner);
 
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
 	UQuestObject* UnlockQuestObject(UQuestObject* QuestObject);
 	
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	bool IsQuestUnlocked(TSubclassOf<UQuestObject> QuestToCheck, AController* QuestOwner) const;
+	bool IsQuestUnlocked(TSubclassOf<UQuestObject> QuestToCheck, FString QuestOwner) const;
 
 	/**
 	 * @param QuestClass Quest class that gets accepted
@@ -122,25 +122,25 @@ public:
 	 * @return The Quest that has been accepted. Returns NULL if the quest is not unlocked. 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	UQuestObject* AcceptQuest(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner);
+	UQuestObject* AcceptQuest(TSubclassOf<UQuestObject> QuestClass, FString QuestOwner);
 	
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
 	UQuestObject* AcceptQuestObject(UQuestObject* QuestObject);
 
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	UQuestObject* InitializeQuest(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner);
+	UQuestObject* InitializeQuest(TSubclassOf<UQuestObject> QuestClass, FString QuestOwner);
 
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
 	UQuestObject* InitializeQuestObject(UQuestObject* QuestObject);
 	
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	UQuestObject* StartQuest(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner);
+	UQuestObject* StartQuest(TSubclassOf<UQuestObject> QuestClass, FString QuestOwner);
 
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
 	UQuestObject* StartQuestObject(UQuestObject* QuestObject);
 
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	void AddProgress(AController* QuestOwner, UQuestProgressionObject* Progressor, TSubclassOf<UQuestObject> QuestClass);
+	void AddProgress(FString QuestOwner, UQuestProgressionObject* Progressor, TSubclassOf<UQuestObject> QuestClass);
 	
 	/**
 	 * 
@@ -150,20 +150,20 @@ public:
 	 * @return The quest object that received the command. Returns NULL if the command failed
 	 */
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	UQuestObject* ApplyCommandToQuest(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner, EQuestEnterCommand QuestCommand);
+	UQuestObject* ApplyCommandToQuest(TSubclassOf<UQuestObject> QuestClass, FString QuestOwner, EQuestEnterCommand QuestCommand);
 	
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	bool EnsureControllerEntryExists(AController* Owner);
+	bool EnsurePlayerEntryExists(FString Owner);
 	
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
 	void ClearQuests();
 
 private:
 	UFUNCTION()
-	FQuestComparator& GetQuestComparatorForController(TSubclassOf<UQuestObject> QuestClass, const AController* Controller);
+	FQuestComparator& GetQuestComparatorForPlayer(TSubclassOf<UQuestObject> QuestClass, const FString Controller);
 
 	UFUNCTION()
-	FQuestComparator CreateNewComparator(TSubclassOf<UQuestObject> QuestClass, AController* Owner, bool AutoUnlocked = false);
+	FQuestComparator CreateNewComparator(TSubclassOf<UQuestObject> QuestClass, FString Owner, bool AutoUnlocked = false);
 
 	/**
 	 *	Adds the comparison object for quests to the list of the owning controller if there is none with
@@ -174,7 +174,7 @@ private:
 	 * @return True when the comparator has been added, meaning no other comparator has the same quest class
 	 */
 	UFUNCTION()
-	bool AddQuestComparator(FQuestComparator& Comparator, AController* Owner);
+	bool AddQuestComparator(FQuestComparator& Comparator, FString Owner);
 	
 	// Do not edit, this is needed to have access to an invalid QuestComparator which we can use as a non const return value
 	UPROPERTY()

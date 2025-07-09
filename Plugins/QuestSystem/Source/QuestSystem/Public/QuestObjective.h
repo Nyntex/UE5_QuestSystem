@@ -104,7 +104,7 @@ public:
 	void ForceStatus(EQuestStatus NewStatus);
 
 	UFUNCTION(BlueprintCallable, Category="QuestObjective")
-	AController* GetController() const;
+	FString GetQuestOwner() const;
 
 	UFUNCTION(BlueprintCallable, Category="QuestObjective")
 	UQuestObject* GetOwningQuestObject() const;

@@ -36,7 +36,7 @@ public:
 	FName QuestName;
 	
 	UPROPERTY(Category="QuestSystem|Quest", BlueprintReadOnly, VisibleInstanceOnly)
-	AController* QuestOwningController;
+	FString QuestOwner;
 	
 	UPROPERTY(BlueprintAssignable, Category="QuestSystem|Quest|Event")
 	FOnQuestStarted OnQuestStartedDelegate;
@@ -133,6 +133,17 @@ public:
 	
 	UFUNCTION(Category="Quest", BlueprintCallable)
 	EQuestStatus TryFinishQuest();
+
+	/**
+	 * OVERRIDE THIS!
+	 * When in multiplayer there is no good way of identifying a specific player
+	 * because there are so many variables. I can't ensure which system the user will have in place
+	 * for checking which player is which so the user needs to check for that.
+	 * 
+	 * @return The player controller from this quest owners name
+	 */
+	UFUNCTION(Category="Quest", BlueprintNativeEvent, BlueprintCallable)
+	AController* GetOwningController();
 
 protected:
 	UPROPERTY(Category="Quest", BlueprintReadWrite)

@@ -4,6 +4,7 @@
 #include "QuestSubsystem.h"
 #include "QuestObject.h"
 #include "QuestProgressionObject.h"
+#include "Kismet/GameplayStatics.h"
 
 UQuestSubsystem::UQuestSubsystem()
 	: Super()
@@ -16,7 +17,7 @@ void UQuestSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	Quests.Empty();
-	Quests = TMap<AController*, FTArrayQuestComparator>();
+	Quests = TMap<FString, FTArrayQuestComparator>();
 }
 
 void UQuestSubsystem::Deinitialize()
@@ -27,26 +28,33 @@ void UQuestSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-UQuestObject* UQuestSubsystem::GetQuestObject(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner) const
+UQuestObject* UQuestSubsystem::GetQuestObject(TSubclassOf<UQuestObject> QuestClass, FString QuestOwner) const
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::GetQuestObject)
 	auto* QuestComparatorArray = Quests.Find(QuestOwner);
 	if (!QuestComparatorArray)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Red, "UQuestSubsystem::GetQuestObject - FTArrayQuestComparator is missing");
 		return nullptr;
+	}
+
+	
 	
 	TArray<FQuestComparator> QuestObjects = QuestComparatorArray->Get();
 	for (FQuestComparator Object : QuestObjects)
 	{
 		if (Object.QuestClass == QuestClass)
 		{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Red, "UQuestSubsystem::GetQuestObject - Found given quest");
 			return Object.QuestObject;
 		}
 	}
 
+	GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Red, "UQuestSubsystem::GetQuestObject - Quest is missing");
 	return nullptr;
 }
 
-UQuestObject* UQuestSubsystem::UnlockQuest(TSubclassOf<UQuestObject> QuestToUnlock, AController* QuestOwner)
+UQuestObject* UQuestSubsystem::UnlockQuest(TSubclassOf<UQuestObject> QuestToUnlock, FString QuestOwner)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::UnlockQuest)
 	
@@ -59,10 +67,10 @@ UQuestObject* UQuestSubsystem::UnlockQuestObject(UQuestObject* QuestObject)
 
 	if (!IsValid(QuestObject)) return nullptr;
 
-	return ApplyCommandToQuest(QuestObject->GetClass(), QuestObject->QuestOwningController, EQuestEnterCommand::UNLOCK);
+	return ApplyCommandToQuest(QuestObject->GetClass(), QuestObject->QuestOwner, EQuestEnterCommand::UNLOCK);
 }
 
-bool UQuestSubsystem::IsQuestUnlocked(TSubclassOf<UQuestObject> QuestToCheck, AController* QuestOwner) const
+bool UQuestSubsystem::IsQuestUnlocked(TSubclassOf<UQuestObject> QuestToCheck, FString QuestOwner) const
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::IsQuestUnlocked)
 	auto* QuestComparatorArray = Quests.Find(QuestOwner);
@@ -82,7 +90,7 @@ bool UQuestSubsystem::IsQuestUnlocked(TSubclassOf<UQuestObject> QuestToCheck, AC
 	return false;
 }
 
-UQuestObject* UQuestSubsystem::AcceptQuest(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner)
+UQuestObject* UQuestSubsystem::AcceptQuest(TSubclassOf<UQuestObject> QuestClass, FString QuestOwner)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::AcceptQuest)
 
@@ -95,10 +103,10 @@ UQuestObject* UQuestSubsystem::AcceptQuestObject(UQuestObject* QuestObject)
 	
 	if (!IsValid(QuestObject)) return nullptr;
 	
-	return ApplyCommandToQuest(QuestObject->GetClass(), QuestObject->QuestOwningController, EQuestEnterCommand::ACCEPT);
+	return ApplyCommandToQuest(QuestObject->GetClass(), QuestObject->QuestOwner, EQuestEnterCommand::ACCEPT);
 }
 
-UQuestObject* UQuestSubsystem::InitializeQuest(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner)
+UQuestObject* UQuestSubsystem::InitializeQuest(TSubclassOf<UQuestObject> QuestClass, FString QuestOwner)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::InitializeQuest)
 	
@@ -111,10 +119,10 @@ UQuestObject* UQuestSubsystem::InitializeQuestObject(UQuestObject* QuestObject)
 	
 	if (!IsValid(QuestObject)) return nullptr;
 	
-	return ApplyCommandToQuest(QuestObject->GetClass(), QuestObject->QuestOwningController, EQuestEnterCommand::INITIALIZE);
+	return ApplyCommandToQuest(QuestObject->GetClass(), QuestObject->QuestOwner, EQuestEnterCommand::INITIALIZE);
 }
 
-UQuestObject* UQuestSubsystem::StartQuest(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner)
+UQuestObject* UQuestSubsystem::StartQuest(TSubclassOf<UQuestObject> QuestClass, FString QuestOwner)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::StartQuest)
 	
@@ -126,18 +134,18 @@ UQuestObject* UQuestSubsystem::StartQuestObject(UQuestObject* QuestObject)
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::StartQuestObject)
 	
 	if (!IsValid(QuestObject)) return nullptr;
-	return ApplyCommandToQuest(QuestObject->GetClass(), QuestObject->QuestOwningController, EQuestEnterCommand::START);
+	return ApplyCommandToQuest(QuestObject->GetClass(), QuestObject->QuestOwner, EQuestEnterCommand::START);
 }
 
-UQuestObject* UQuestSubsystem::ApplyCommandToQuest(TSubclassOf<UQuestObject> QuestClass, AController* QuestOwner,
+UQuestObject* UQuestSubsystem::ApplyCommandToQuest(TSubclassOf<UQuestObject> QuestClass, FString QuestOwner,
 	EQuestEnterCommand QuestCommand)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::TryEnterQuestState)
 	
-	if (!EnsureControllerEntryExists(QuestOwner)) return nullptr;
+	if (!EnsurePlayerEntryExists(QuestOwner)) return nullptr;
 	if (!IsValid(QuestClass)) return nullptr;
 	
-	FQuestComparator QuestComparator = GetQuestComparatorForController(QuestClass, QuestOwner);
+	FQuestComparator QuestComparator = GetQuestComparatorForPlayer(QuestClass, QuestOwner);
 	//FQuestComparator NewComparator = FQuestComparator();
 	if (QuestComparator == InvalidQuestComparator || !IsValid(QuestComparator.QuestObject))
 	{
@@ -168,7 +176,7 @@ UQuestObject* UQuestSubsystem::ApplyCommandToQuest(TSubclassOf<UQuestObject> Que
 	return Success ? QuestComparator.QuestObject : nullptr; 
 }
 
-AController* UQuestSubsystem::GetQuestOwner(TSubclassOf<UQuestObject> QuestClass) const
+FString UQuestSubsystem::GetQuestOwner(TSubclassOf<UQuestObject> QuestClass) const
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::GetQuestOwner)
 	
@@ -187,14 +195,14 @@ AController* UQuestSubsystem::GetQuestOwner(TSubclassOf<UQuestObject> QuestClass
 		}
 	}
 
-	return nullptr;
+	return "";
 }
 
-void UQuestSubsystem::AddProgress(AController* QuestOwner, UQuestProgressionObject* Progressor, TSubclassOf<UQuestObject> QuestClass)
+void UQuestSubsystem::AddProgress(FString QuestOwner, UQuestProgressionObject* Progressor, TSubclassOf<UQuestObject> QuestClass)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::AddProgress)
-	if (!EnsureControllerEntryExists(QuestOwner) || !Progressor) return;
-	if (!IsValid(GetQuestObject(QuestClass, QuestOwner))) return;
+	if (!EnsurePlayerEntryExists(QuestOwner) || !Progressor) return;
+	if (QuestClass && !IsValid(GetQuestObject(QuestClass, QuestOwner))) return;
 
 	if (!QuestClass)
 	{
@@ -218,8 +226,8 @@ void UQuestSubsystem::ClearQuests()
 	Quests.Empty();
 }
 
-FQuestComparator& UQuestSubsystem::GetQuestComparatorForController(TSubclassOf<UQuestObject> QuestClass,
-	const AController* Controller)
+FQuestComparator& UQuestSubsystem::GetQuestComparatorForPlayer(TSubclassOf<UQuestObject> QuestClass,
+                                                                   const FString Controller)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::GetQuestComparatorForController)
 	TArray<FQuestComparator>& QuestComparators = Quests.Find(Controller)->GetRef();
@@ -236,17 +244,17 @@ FQuestComparator& UQuestSubsystem::GetQuestComparatorForController(TSubclassOf<U
 	return InvalidQuestComparator;
 }
 
-FQuestComparator UQuestSubsystem::CreateNewComparator(TSubclassOf<UQuestObject> QuestClass, AController* Owner, bool AutoUnlocked)
+FQuestComparator UQuestSubsystem::CreateNewComparator(TSubclassOf<UQuestObject> QuestClass, FString Owner, bool AutoUnlocked)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::CreateNewComparator)
 
-	if (!QuestClass || !Owner)
+	if (!QuestClass || Owner.IsEmpty())
 	{
 		InvalidQuestComparator = FQuestComparator();
 		return InvalidQuestComparator;
 	}
 	
-	if (!EnsureControllerEntryExists(Owner)) 
+	if (!EnsurePlayerEntryExists(Owner)) 
 	{
 		InvalidQuestComparator = FQuestComparator();
 		return InvalidQuestComparator;
@@ -255,21 +263,21 @@ FQuestComparator UQuestSubsystem::CreateNewComparator(TSubclassOf<UQuestObject> 
 	FQuestComparator NewComparator;
 	NewComparator.QuestObject = NewObject<UQuestObject>(this, QuestClass);
 	NewComparator.QuestClass = QuestClass;
-	NewComparator.QuestObject->QuestOwningController = Owner;
+	NewComparator.QuestObject->QuestOwner = Owner;
 	NewComparator.QuestObject->QuestStatus = AutoUnlocked ? EQuestStatus::UNLOCKED : EQuestStatus::LOCKED;
 	
 	return NewComparator;
 	
 }
 
-bool UQuestSubsystem::AddQuestComparator(FQuestComparator& Comparator, AController* Owner)
+bool UQuestSubsystem::AddQuestComparator(FQuestComparator& Comparator, FString Owner)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::AddQuestComparator)
 	
-	if (!Owner) return false;
+	if (Owner.IsEmpty()) return false;
 	if (Comparator == InvalidQuestComparator) return false;
 
-	if (!EnsureControllerEntryExists(Owner)) return false;
+	if (!EnsurePlayerEntryExists(Owner)) return false;
 
 	TArray<FQuestComparator>& QuestComparators = Quests.Find(Owner)->GetRef();
 
@@ -292,7 +300,7 @@ bool UQuestSubsystem::AddQuestComparator(FQuestComparator& Comparator, AControll
 	return true;
 }
 
-TArray<UQuestObject*> UQuestSubsystem::GetQuestObjects(AController* QuestsOwner) const
+TArray<UQuestObject*> UQuestSubsystem::GetQuestObjects(FString QuestsOwner) const
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::GetQuestObject)
 	if (!Quests.Find(QuestsOwner)) return {};
@@ -309,11 +317,11 @@ TArray<UQuestObject*> UQuestSubsystem::GetQuestObjects(AController* QuestsOwner)
 }
 
 
-bool UQuestSubsystem::EnsureControllerEntryExists(AController* Owner)
+bool UQuestSubsystem::EnsurePlayerEntryExists(FString Owner)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestSubsystem::EnsureControllerEntryExists)
 
-	if (!IsValid(Owner)) return false;
+	if (Owner.IsEmpty()) return false;
 	
 	//Is Controller known, if not, add it to the array
 	if (!Quests.Find(Owner))

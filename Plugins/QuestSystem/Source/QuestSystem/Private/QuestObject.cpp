@@ -115,6 +115,11 @@ EQuestStatus UQuestObject::TryFinishQuest()
 	return FinishStatus;
 }
 
+AController* UQuestObject::GetOwningController_Implementation()
+{
+	return UGameplayStatics::GetPlayerController(this, 0);
+}
+
 TArray<FString> UQuestObject::GetQuestModifierDescriptions() const
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(UQuestObject::GetQuestObjectiveDescriptions);
